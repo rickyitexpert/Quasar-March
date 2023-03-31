@@ -1,43 +1,75 @@
 <template>
   <q-page>
-    <div class="row">
-      <q-card class="col q-ma-md">
-        <q-form class="q-ma-md">
-          <q-input label="Account Name" v-model="form.data.account_name" />
-          <q-input label="Contact Number" v-model="form.data.contact_number" />
-          <q-btn label="Submit" class="q-my-md" color="primary" unelevated @click="insertIntoTable"></q-btn>
-        </q-form>
-      </q-card>
-
-      <q-table :rows="table.rows" :columns="table.columns" class="col q-ma-md">
-
-      </q-table>
+    <div>
+      <q-btn class="q-mx-md" label="Create Account" color="primary" @click="formOpen = true"></q-btn>
     </div>
-    {{ table }}
+    <div class="row" v-if="table.data !== null">
+      <q-dialog v-model="formOpen">
+        <q-card class="q-ma-md col-4 bg-red-2  position-relative">
+          <div class="q-pa-md">
+            <h6 class="q-ma-none q-my-md"> Create Account</h6>
+          </div>
+          <q-form ref="form" class="q-pa-md scroll" style="height:60vh">
+            <q-input v-model="formData.account_name" label="Account Name"
+              :rules="[val => !!val || 'Mandatory Field', val => !(val.match(/\W/i)) || 'Special Characters Not allowed']" />
+            <q-input :rules="[val => !!val || 'Mandatory Field']" v-model="formData.account_address" type="textarea"
+              label="Address" />
+            <q-input v-model="formData.contact_number" mask="##########" fill-mask label="Contact Number">
+              <template v-slot:prepend>
+                <span>+91</span>
+              </template>
+            </q-input>
+          </q-form>
+          <div class="bg-white q-pa-md">
+            <q-btn label="Submit" color="primary" unelevated @click="submit"></q-btn>
+          </div>
+        </q-card>
+      </q-dialog>
+
+
+      <q-table :rows="table.data" class="bg-purple-2 q-ma-md col"></q-table>
+    </div>
+
 
   </q-page>
 </template>
 <script>
+import slotComponent from 'components/slot.vue'
 export default {
+  components: { slotComponent },
   data () {
     return {
-      form: {
-        data: {}
-      },
+      formOpen: false,
+      formData: {},
       table: {
-        rows: [],
-        columns: [
-          { label: 'Account', field: 'account_name' },
-          { label: 'Mobile Number', field: 'contact_number' }
-        ]
+        data: null,
       }
     }
   },
   methods: {
-    insertIntoTable () {
-      this.table.rows.push(this.form.data)
-      this.form.data = {}
+
+    async submit () {
+      let valid = await this.$refs.form.validate()
+      if (!valid) {
+        return
+      }
+      let response = await this.$axios.post('https://gangotri-api.brainysoftwares.com/items/accounts', this.formData)
+      if (response.status >= 200 && response.status < 400) {
+        this.formData = {}
+        this.formOpen = false
+        this.$q.dialog({
+          message: 'Data Submitted Successfully'
+        })
+      }
+
+    },
+    async fetchData () {
+      let response = await this.$axios.get('https://gangotri-api.brainysoftwares.com/items/accounts')
+      this.table.data = response.data.data
     }
+  },
+  async beforeMount () {
+    await this.fetchData()
   }
 }
 </script>
