@@ -1,12 +1,12 @@
 <template>
   <q-page>
     <div>
-      <q-btn class="q-mx-md" label="Create Account" color="primary" @click="formOpen = true"></q-btn>
+      <q-btn class="q-mx-md" :label="'Create ' + collection_name" color="primary" @click="formOpen = true"></q-btn>
     </div>
     <div class="row" v-if="table.data !== null">
       <q-dialog v-model="formOpen">
         <q-card class="q-ma-md col-4 bg-red-2  position-relative">
-          <div class="q-pa-md">
+          <!-- <div class="q-pa-md">
             <h6 class="q-ma-none q-my-md"> Create Account</h6>
           </div>
           <q-form ref="form" class="q-pa-md scroll" style="height:60vh">
@@ -22,7 +22,7 @@
           </q-form>
           <div class="bg-white q-pa-md">
             <q-btn label="Submit" color="primary" unelevated @click="submit"></q-btn>
-          </div>
+          </div> -->
         </q-card>
       </q-dialog>
 
@@ -36,6 +36,7 @@
 <script>
 import slotComponent from 'components/slot.vue'
 export default {
+  props: ['collection_name'],
   components: { slotComponent },
   data () {
     return {
@@ -44,6 +45,11 @@ export default {
       table: {
         data: null,
       }
+    }
+  },
+  watch: {
+    collection_name () {
+      this.fetchData()
     }
   },
   methods: {
@@ -64,11 +70,12 @@ export default {
 
     },
     async fetchData () {
-      let response = await this.$axios.get('https://gangotri-api.brainysoftwares.com/items/accounts')
+      let response = await this.$axios.get('https://gangotri-api.brainysoftwares.com/items/' + this.collection_name)
       this.table.data = response.data.data
     }
   },
   async beforeMount () {
+    console.log(this.collection_name)
     await this.fetchData()
   }
 }

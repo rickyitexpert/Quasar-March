@@ -27,7 +27,11 @@ export default {
             path: '/' + module.collection_name,
             component: () => import('layouts/MainLayout.vue'),
             children: [
-              { path: '', component: async () => await import('./../pages/' + module.collection_name + '.vue') }
+              {
+                path: '', component: async () => await import('pages/Module.vue'), props: () => {
+                  return { collection_name: module.collection_name }
+                }
+              }
             ]
 
           },)
