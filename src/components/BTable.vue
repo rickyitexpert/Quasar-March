@@ -48,6 +48,7 @@ export default {
     },
     async fetchData () {
       let params = {}
+      params.sort = '-id'
       if (this.searchText) {
         params.filter = { _or: [] }
         this.fields.forEach((field) => {
