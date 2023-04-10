@@ -16,7 +16,7 @@
       <div class="column full-height">
         <div class="bg-grey-4" style="height:150px">
         </div>
-        <div class="col bg-teal-3">
+        <div class="col">
           <drawer-menu></drawer-menu>
         </div>
       </div>
