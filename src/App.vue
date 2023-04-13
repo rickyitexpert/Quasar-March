@@ -8,8 +8,13 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'App',
   data: function () {
+    return {
+      time: null
+    }
 
   },
-
+  created () {
+    this.time = new Date()
+  }
 })
 </script>

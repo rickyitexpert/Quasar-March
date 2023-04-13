@@ -3,8 +3,8 @@
     <q-loader></q-loader>
     <h6> Accounting Taxes</h6>
     {{ formData }}
-    <q-input label="Tax Name" v-model="formData.tax_name"></q-input>
-    <q-input label="Tax Rate" v-model="formData.tax_rate"></q-input>
+    <q-input label="Tax Name" v-model="formData.tax_name" :rules="[validationMandatory, validationNoSymbols]"></q-input>
+    <q-input label="Tax Rate" v-model="formData.tax_rate" :rules="[validationMandatory]"></q-input>
     <div class="q-mt-xl absolute-bottom row q-gutter-sm">
       <q-btn label="Submit" color="primary" @click="submitForm"></q-btn>
       <q-btn label="Close" color="red" @click="$emit('close-form')"></q-btn>
@@ -15,7 +15,9 @@
   </q-form>
 </template>
 <script>
+import validationMixins from '../../../mixins/validations.js'
 export default {
+  mixins: [validationMixins],
   data () {
     return {
       formData: {},
