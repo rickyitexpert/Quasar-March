@@ -15,6 +15,10 @@ export default defineComponent({
   },
   created () {
     this.time = new Date()
+    let access_token = localStorage.getItem('access_token')
+    if (access_token) {
+      this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token
+    }
   }
 })
 </script>
