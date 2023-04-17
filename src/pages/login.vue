@@ -18,21 +18,50 @@
   </q-page>
 </template>
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
       loginCredentials: {},
-      response: null
+      response: null,
+      userInactivityTime: 0
     }
   },
   methods: {
     async login () {
+      delete this.$axios.defaults.headers.common['Authorization']
+
       let response = await this.$axios.post('https://gangotri-api.brainysoftwares.com/auth/login', this.loginCredentials)
+      console.log(response)
       this.response = response.data
+      this.initAuthSession()
+      setTimeout(this.refreshToken, response.data.data.expires - 880000)
+      this.$router.push('/')
+    },
+    async refreshToken () {
+      console.log('Refresh Token being used to get new access token')
+      console.log(this.calculateuserInactivityTime())
+      if (this.calculateuserInactivityTime() > 30) {
+        setTimeout(this.refreshToken, this.response.data.expires - 880000)
+        return
+      }
+      let response = await this.$axios.post('https://gangotri-api.brainysoftwares.com/auth/refresh', { refresh_token: this.response.data.refresh_token })
+      console.log(response)
+      this.response = response.data
+      this.initAuthSession()
+      setTimeout(this.refreshToken, response.data.data.expires - 880000)
+    },
+    initAuthSession () {
+      this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.response.data.access_token
+      localStorage.setItem('access_token', this.response.data.access_token)
+    },
+    calculateuserInactivityTime () {
 
-      this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.data.access_token
+      console.log('calculating')
+      let currentTimestamp = new Date()
+      return date.getDateDiff(currentTimestamp, this.$store.state.app.userTimer, 'seconds')
 
-      localStorage.setItem('access_token', response.data.data.access_token)
+
     }
 
   }

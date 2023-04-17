@@ -7,8 +7,8 @@
         <q-toolbar-title>
           Quasar App
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        {{ userInactivityTime }}
+        <div><q-btn label="Logout" @click="logout()"></q-btn></div>
       </q-toolbar>
     </q-header>
 
@@ -32,18 +32,36 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import drawerMenu from 'components/Menu.vue'
+import { date } from 'quasar'
 export default {
   name: 'MainLayout',
   components: { drawerMenu },
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      userInactivityTime: 0
     }
   },
   methods: {
     toggleLeftDrawer () {
       this.leftDrawerOpen = !this.leftDrawerOpen
+    },
+    logout () {
+      delete this.$axios.defaults.headers.common['Authorization']
+      localStorage.removeItem('access_token')
+      this.$router.push('/login')
+    },
+    calculateuserInactivityTime () {
+
+      console.log('calculating')
+      let currentTimestamp = new Date()
+      this.userInactivityTime = date.getDateDiff(currentTimestamp, this.$store.state.app.userTimer, 'seconds')
+
+
     }
+  },
+  created () {
+    setInterval(this.calculateuserInactivityTime, 1000)
   }
 
 }
