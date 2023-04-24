@@ -22,7 +22,7 @@ export default defineComponent({
       return response
     }, (error) => {
       if (error.response.status === 401 || error.response.status === 403) {
-        this.$router.push('/login')
+        // this.$router.push('/login')
         delete this.$axios.defaults.headers.common['Authorization']
       }
     })

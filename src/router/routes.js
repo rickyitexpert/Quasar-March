@@ -8,6 +8,13 @@ const routes = [
     ]
   },
   {
+    path: '/score',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Score.vue') }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('layouts/BlankLayout.vue'),
     children: [
