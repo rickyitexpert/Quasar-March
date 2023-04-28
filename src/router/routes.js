@@ -15,6 +15,13 @@ const routes = [
     ]
   },
   {
+    path: '/flipkart',
+    component: () => import('layouts/FlipkartLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/flipkart.vue') }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('layouts/BlankLayout.vue'),
     children: [
