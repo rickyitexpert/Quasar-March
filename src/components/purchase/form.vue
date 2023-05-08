@@ -1,0 +1,3 @@
+<template>
+  Purchase Form
+</template>
